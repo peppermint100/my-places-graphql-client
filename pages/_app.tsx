@@ -1,10 +1,15 @@
 // apply css file here to make it global,
 import '../styles/globals.css'
+import { ApolloProvider, useApolloClient } from '@apollo/client'
+import { useApollo } from '../lib/useApollo'
 
-function MyApp({ Component, pageProps }) {
-  console.log("_app.tsx : ", Component)
-  console.log("_app.tsx : ", pageProps)
-  return <Component {...pageProps} />
+function App({ Component, pageProps }) {
+  const apolloClient = useApollo(pageProps.initialApolloState)
+
+  return (
+    <ApolloProvider client={apolloClient}>
+      <Component {...pageProps} />
+    </ApolloProvider>
+  )
 }
-
-export default MyApp
+export default App

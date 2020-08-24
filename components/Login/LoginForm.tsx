@@ -8,7 +8,6 @@ interface Props {
 }
 
 const LoginForm: React.FC<Props> = ({ toRegister }) => {
-
     return (
         <>
             <div className={styles.container}>
