@@ -2,16 +2,30 @@ import { useMemo } from 'react'
 import { ApolloClient, HttpLink, InMemoryCache, NormalizedCacheObject } from '@apollo/client'
 // import { concatPagination } from '@apollo/client/utilities'
 import env from '../config/env'
+import cookie from "cookie"
+import { parse } from 'path'
 
 let apolloClient
 
-function createApolloClient(): ApolloClient<NormalizedCacheObject> {
+function parseCookies(req?: any, options = {}) {
+    return cookie.parse(
+        req ? req.headers.cookie || "" : document.cookie,
+        options
+    );
+}
+
+
+function createApolloClient({ getToken }): ApolloClient<NormalizedCacheObject> {
     return new ApolloClient({
         ssrMode: typeof window === 'undefined',
         link: new HttpLink({
-            uri: `${env.GRAPHQL_ENDPOINT}`, // Server URL (must be absolute)
-            credentials: 'same-origin', // Additional fetch() options like `credentials` or `headers`
+            uri: `${env.GRAPHQL_ENDPOINT}`, // Server URL (must be absolute),
+            credentials: 'include', // Additional fetch() options like `credentials` or `headers`
+            headers: {
+                'Access-Control-Allow-Credentials': true
+            },
         }),
+
         cache: new InMemoryCache({
             typePolicies: {
                 Query: {
@@ -24,8 +38,11 @@ function createApolloClient(): ApolloClient<NormalizedCacheObject> {
     })
 }
 
-export function initializeApollo(initialState = null) {
-    const _apolloClient = apolloClient ?? createApolloClient()
+
+
+
+export function initializeApollo(initialState = null, { getToken }: any) {
+    const _apolloClient = apolloClient ?? createApolloClient({ getToken })
 
     // If your page has Next.js data fetching methods that use Apollo Client, the initial state
     // gets hydrated here
@@ -45,6 +62,10 @@ export function initializeApollo(initialState = null) {
 }
 
 export function useApollo(initialState) {
-    const store = useMemo(() => initializeApollo(initialState), [initialState])
+    const store = useMemo(() => initializeApollo(initialState, {
+        getToken: () => {
+            return parseCookies()
+        }
+    }), [initialState])
     return store
 }
