@@ -40,6 +40,12 @@
     margin: 20px 0;
     font-weight: 700;
     letter-spacing: 1px;
+    cursor: pointer;
+}
+
+.button:hover{
+    transition: opacity 0.3s ease-in-out;
+    opacity: .7;
 }
 
 .helperText{

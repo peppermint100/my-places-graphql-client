@@ -4,7 +4,7 @@ export const SELF_QUERY = gql`
 {
     self{
         username
+        email
     }
 } 
-
 `

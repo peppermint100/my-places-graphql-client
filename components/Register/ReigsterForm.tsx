@@ -1,20 +1,57 @@
-import React from 'react'
+import React, { useState } from 'react'
 import { Formik } from "formik"
 import styles from "./RegisterForm.module.css"
+import ErrorText from '../ErrorText/ErrorText'
+import { useMutation } from '@apollo/client'
+import { REGISTER_MUTATION } from '../../query/User/RegisterMutation'
 
 interface Props {
     toLogin: () => void
 }
+
+interface RegisterReponse {
+    username: string
+    email: string
+}
+
+interface RegisterRequest {
+    data: {
+        username: string
+        email: string
+        password: string
+        confirmPassword: string
+    }
+}
+
 const RegisterForm: React.FC<Props> = ({ toLogin }) => {
+    const [ErrorMessage, setErrorMessage] = useState<string>("")
+
+    const [register] = useMutation<RegisterReponse, RegisterRequest>(REGISTER_MUTATION)
+
+    const onSubmit = async ({ username, email, password, confirmPassword }, { setSubmitting }) => {
+        setSubmitting(true)
+        try {
+            const result = await register({
+                variables: {
+                    data: { username, email, password, confirmPassword }
+                }
+            })
+            console.log(result)
+        } catch (err) {
+            if (err) {
+                setErrorMessage(err.message)
+                console.log(err.data)
+            }
+        }
+
+        setSubmitting(false)
+    }
+
     return (
         <>
             <div className={styles.container}>
                 <header className={styles.header}>Sign-Up</header>
-                <Formik initialValues={{ username: "", email: "", password: "" }} onSubmit={(data, { setSubmitting }) => {
-                    setSubmitting(true)
-                    console.log(data)
-                    setSubmitting(false)
-                }}>
+                <Formik initialValues={{ username: "", email: "", password: "", confirmPassword: "" }} onSubmit={onSubmit}>
                     {
                         ({ values, handleChange, handleSubmit, isSubmitting }) => (
                             <form className={styles.form} onSubmit={handleSubmit}>
@@ -41,6 +78,17 @@ const RegisterForm: React.FC<Props> = ({ toLogin }) => {
                                         type="password"
                                         value={values.password}
                                         onChange={handleChange} />
+                                </div>
+                                <div>
+                                    <input className={styles.input}
+                                        placeholder="   Enter Password Again"
+                                        name="confirmPassword"
+                                        type="password"
+                                        value={values.confirmPassword}
+                                        onChange={handleChange} />
+                                </div>
+                                <div>
+                                    <ErrorText text={ErrorMessage} />
                                 </div>
                                 <button className={styles.button} type="submit" disabled={isSubmitting}>SIGN-UP</button>
                             </form>

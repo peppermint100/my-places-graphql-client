@@ -7,20 +7,21 @@ import { parse } from 'path'
 
 let apolloClient
 
-function parseCookies(req?: any, options = {}) {
-    return cookie.parse(
-        req ? req.headers.cookie || "" : document.cookie,
-        options
-    );
-}
+// function parseCookies(req?: any, options = {}) {
+//     return cookie.parse(
+//         req ? req.headers.cookie || "" : document.cookie,
+//         options
+//     );
+// }
 
 
-function createApolloClient({ getToken }): ApolloClient<NormalizedCacheObject> {
+function createApolloClient(): ApolloClient<NormalizedCacheObject> {
     return new ApolloClient({
         ssrMode: typeof window === 'undefined',
         link: new HttpLink({
             uri: `${env.GRAPHQL_ENDPOINT}`, // Server URL (must be absolute),
-            credentials: 'include', // Additional fetch() options like `credentials` or `headers`
+            credentials: 'include', // Additional fetch() options like `credentials` or `headers`include
+            // must be include to get cookies from server
             headers: {
                 'Access-Control-Allow-Credentials': true
             },
@@ -38,11 +39,8 @@ function createApolloClient({ getToken }): ApolloClient<NormalizedCacheObject> {
     })
 }
 
-
-
-
-export function initializeApollo(initialState = null, { getToken }: any) {
-    const _apolloClient = apolloClient ?? createApolloClient({ getToken })
+export function initializeApollo(initialState = null) {
+    const _apolloClient = apolloClient ?? createApolloClient()
 
     // If your page has Next.js data fetching methods that use Apollo Client, the initial state
     // gets hydrated here
@@ -62,10 +60,6 @@ export function initializeApollo(initialState = null, { getToken }: any) {
 }
 
 export function useApollo(initialState) {
-    const store = useMemo(() => initializeApollo(initialState, {
-        getToken: () => {
-            return parseCookies()
-        }
-    }), [initialState])
+    const store = useMemo(() => initializeApollo(initialState), [initialState])
     return store
 }
