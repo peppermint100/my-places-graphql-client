@@ -4,7 +4,7 @@ import styles from "./LoginForm.module.css"
 import ErrorText from '../ErrorText/ErrorText'
 import { useMutation } from '@apollo/client'
 import { LOGIN_MUTATION } from '../../query/User/LoginMutation'
-import { validate } from 'graphql'
+import { useRouter } from "next/router"
 
 interface Props {
     toRegister: () => void
@@ -29,6 +29,8 @@ const LoginForm: React.FC<Props> = ({ toRegister }) => {
         LoginRequest
     >(LOGIN_MUTATION);
 
+    const router = useRouter()
+
     const onSubmit = async ({ email, password }, { setSubmitting }) => {
         setSubmitting(true)
         try {
@@ -38,7 +40,7 @@ const LoginForm: React.FC<Props> = ({ toRegister }) => {
                 }
             })
 
-            console.log("result : ", result)
+            router.reload()
         }
         catch (err) {
             if (err) {
