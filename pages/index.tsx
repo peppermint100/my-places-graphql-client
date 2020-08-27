@@ -6,6 +6,7 @@ import Footer from "../components/Footer/Footer"
 import { useAuth } from "../lib/useAuth"
 import Loading from "../components/Loading/Loading"
 import Places from "../components/Places/Places"
+import Map from "../components/Map/Map"
 
 export default function Index() {
     const { loading, data, error } = useAuth()
@@ -16,7 +17,9 @@ export default function Index() {
                 <Header />
             </header>
             <main className={styles.mainSection}>
-                <section className={styles.map}></section>
+                <section className={styles.map}>
+                    <Map />
+                </section>
                 <section className={styles.auth}>
                     {loading ? <Loading /> : data.self ? <Places data={data.self} /> : <FormContainer />}
                 </section>

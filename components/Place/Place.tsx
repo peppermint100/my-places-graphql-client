@@ -10,7 +10,7 @@ const Place: React.FC<Props> = ({ placeId, placeTitle }) => {
     return (
         <div className={styles.container}>
             <div className={styles.title}><span>{placeTitle}</span></div>
-            <button className={styles.deleteButton}>✂ Delete</button>
+            <button className={styles.deleteButton}>✂</button>
         </div>
     )
 }

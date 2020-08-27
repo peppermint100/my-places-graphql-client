@@ -38,6 +38,10 @@
     width: 100px;
 }
 
+.deleteButton:hover:after{
+  content: "    Delete"
+}
+
 @keyframes shake {
   10%, 90% {
     transform: translate3d(-1px, 0, 0);
