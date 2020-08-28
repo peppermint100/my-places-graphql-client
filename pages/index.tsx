@@ -8,9 +8,10 @@ import Loading from "../components/Loading/Loading"
 import Places from "../components/Places/Places"
 import Map from "../components/Map/Map"
 
-export default function Index() {
-    const { loading, data, error } = useAuth()
 
+export default function Index() {
+    const { loading, data } = useAuth()
+     
     return (
         <div>
             <header className={styles.top}>
@@ -21,7 +22,7 @@ export default function Index() {
                     <Map />
                 </section>
                 <section className={styles.auth}>
-                    {loading ? <Loading /> : data.self ? <Places data={data.self} /> : <FormContainer />}
+                    {loading ? <Loading /> : data && typeof data !== undefined && data.self ? <Places data={data.self} /> : <FormContainer />}
                 </section>
             </main>
             <footer>

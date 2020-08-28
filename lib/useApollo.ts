@@ -26,14 +26,10 @@ function createApolloClient(): ApolloClient<NormalizedCacheObject> {
                 'Access-Control-Allow-Credentials': true
             },
         }),
-
         cache: new InMemoryCache({
             typePolicies: {
                 Query: {
-                    fields: {
-                        // allPosts: concatPagination(),
-                    },
-                },
+                }
             },
         }),
     })
@@ -59,7 +55,7 @@ export function initializeApollo(initialState = null) {
     return _apolloClient
 }
 
-export function useApollo(initialState) {
+export function useApollo(initialState): ApolloClient<NormalizedCacheObject>{
     const store = useMemo(() => initializeApollo(initialState), [initialState])
     return store
 }

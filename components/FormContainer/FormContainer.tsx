@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import styles from "./FormContainer.module.css"
 import LoginForm from '../Login/LoginForm'
 import RegisterForm from '../Register/ReigsterForm'

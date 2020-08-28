@@ -4,6 +4,7 @@ import styles from "./RegisterForm.module.css"
 import ErrorText from '../ErrorText/ErrorText'
 import { useMutation } from '@apollo/client'
 import { REGISTER_MUTATION } from '../../query/User/RegisterMutation'
+import { useRouter } from "next/router"
 
 interface Props {
     toLogin: () => void
@@ -24,6 +25,7 @@ interface RegisterRequest {
 }
 
 const RegisterForm: React.FC<Props> = ({ toLogin }) => {
+    const router = useRouter()
     const [ErrorMessage, setErrorMessage] = useState<string>("")
 
     const [register] = useMutation<RegisterReponse, RegisterRequest>(REGISTER_MUTATION)
@@ -36,7 +38,11 @@ const RegisterForm: React.FC<Props> = ({ toLogin }) => {
                     data: { username, email, password, confirmPassword }
                 }
             })
-            console.log(result)
+            username = ""
+            email = ""
+            password = ""
+            confirmPassword =""
+            setErrorMessage("Now You Can Log-In!")
         } catch (err) {
             if (err) {
                 setErrorMessage(err.message)
