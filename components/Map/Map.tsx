@@ -4,23 +4,29 @@ import {
     withGoogleMap,
     GoogleMap,
     Marker,
+    InfoWindow,
 } from "react-google-maps";
 import Geocode from "react-geocode"
+import Autocomplete from 'react-google-autocomplete';
 
 import env from "./../../config/env"
+import { getInfoByLatLng } from "./mapHelperMethod";
+
+import styles from "./Map.module.css"
+import LocationIndicator from "../LocationIndicator/LocationIndicator";
+import SaveButton from "../SaveButton/SaveButton";
+import { MapStateProps } from "../../types/map";
 
 interface Position {
     lat: number
     lng: number
 }
 
-interface MapStateProps {
-    mapPosition: Position
-    markerPosition: Position
-}
+Geocode.setApiKey(env.GOOGLE_API_KEY)
 
 const Map = () => {
     const [mapState, setMapState] = useState<MapStateProps>({
+        address: "",
         mapPosition: {
             lat: 0,
             lng: 0
@@ -31,35 +37,52 @@ const Map = () => {
         }
     })
 
-    const getMarkerPosition = (e: any) => {
+    const onDragEnd = async (e: any) => {
         let lat = e.latLng.lat()
         let lng = e.latLng.lng()
-
-        setMapState((mapState: any) => {
-            return (
-                {
-                    mapPosition: {
-                        lat, lng
-                    },
-                    markerPosition: {
-                        lat, lng
+        try{
+            const geoInfo = await getInfoByLatLng(lat, lng) 
+            setMapState((mapState: any) => {
+                return (
+                    {
+                        ...mapState,
+                        address: geoInfo.results[0].formatted_address , 
+                        mapPosition: {
+                            lat, lng
+                        },
+                        markerPosition: {
+                            lat, lng
+                        }
                     }
-                }
-            )
-        })
-    }
-
-    const getInfoByPosition = async (lat: number, lng: number) => {
-        try {
-            const data = await Geocode.fromLatLng(lat.toString(), lng.toString())
-            console.log(data)
-        } catch (err) {
-            if (err) {
-                console.log(err)
+                )
+            })
+        }catch(err){
+            if(err){
+                console.log("geo error : " , err)
+                setMapState(mapState)
             }
         }
     }
 
+    const onPlaceSelected = async (place: any) => {
+        const address = place.formatted_address
+        const lat = place.geometry.location.lat()
+        const lng = place.geometry.location.lng()
+        
+        setMapState((mapState: MapStateProps) => {
+            return({
+                ...mapState,
+                address,
+                mapPosition:{
+                    lat, lng
+                },
+                markerPosition:{
+                    lat, lng
+                }
+            })
+        })
+    }
+   
     const MapWithAMarker: React.ComponentClass<any, any> = withScriptjs(withGoogleMap(props =>
         <GoogleMap
             defaultZoom={8}
@@ -68,8 +91,17 @@ const Map = () => {
             <Marker
                 position={{ lat: mapState.markerPosition.lat, lng: mapState.markerPosition.lng }}
                 draggable={true}
-                onDragEnd={getMarkerPosition}
-            />
+                onDragEnd={onDragEnd}
+           >
+              {!mapState.address ? null : <InfoWindow><>{mapState.address}</></InfoWindow>} 
+               </Marker> 
+<Autocomplete
+className={styles.autoComplete}
+    onPlaceSelected={onPlaceSelected}
+    types={['(regions)']}
+/>
+        <LocationIndicator address={mapState.address} />
+        <SaveButton mapState={mapState} />
         </GoogleMap>
     ));
 

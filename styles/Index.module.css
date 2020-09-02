@@ -2,7 +2,7 @@
     display:flex;
     justify-content: center;
     align-items: center; 
-    min-height: 220px;
+    min-height: 180px;
 }
 
 .mainSection{
@@ -14,7 +14,6 @@
 
 .map{
     width: 60%;
-  
 }
 
 .auth{
@@ -33,4 +32,11 @@
     height: 150px;
     width: 100%;
     overflow: hidden;
+}
+
+.footer{
+    position: fixed;
+    height: 180px;
+    bottom: 0;
+    left: 0;
 }

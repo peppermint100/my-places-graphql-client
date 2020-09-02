@@ -38,11 +38,7 @@ const RegisterForm: React.FC<Props> = ({ toLogin }) => {
                     data: { username, email, password, confirmPassword }
                 }
             })
-            username = ""
-            email = ""
-            password = ""
-            confirmPassword =""
-            setErrorMessage("Now You Can Log-In!")
+            router.reload()
         } catch (err) {
             if (err) {
                 setErrorMessage(err.message)

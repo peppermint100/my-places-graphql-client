@@ -1,21 +1,24 @@
-import React, { useState, useEffect } from 'react'
+import React from 'react'
 import styles from "./FormContainer.module.css"
 import LoginForm from '../Login/LoginForm'
 import RegisterForm from '../Register/ReigsterForm'
 
-enum AuthState {
-    LOGIN,
-    REGISTER
-}
+import { AuthState } from '../../types/auth'
+import { authStateVar } from '../../local/cache'
+import { GET_AUTH_STATE } from '../../query/Client/AuthStateQuery'
+import { useQuery } from '@apollo/client'
 
 const FormContainer: React.FC = () => {
-    const [showing, setShowing] = useState<AuthState>(AuthState.LOGIN)
+    const authState = authStateVar()
+    const { data, loading } = useQuery(GET_AUTH_STATE);
 
     return (
         <>
-            {showing === AuthState.LOGIN
-                ? <LoginForm toRegister={() => { setShowing(AuthState.REGISTER) }} />
-                : <RegisterForm toLogin={() => { setShowing(AuthState.LOGIN) }} />
+            {
+                authState === AuthState.LOGIN 
+                 ? <LoginForm toRegister={() => { 
+                     authStateVar(AuthState.REGISTER) }} />
+                : <RegisterForm toLogin={() => { authStateVar(AuthState.LOGIN) }} />
             }
         </>
     )

@@ -4,7 +4,7 @@ import Place from '../Place/Place'
 
 interface Props {
     data: {
-        userId: number;
+        userId: string;
         username: string;
         email: string;
     }

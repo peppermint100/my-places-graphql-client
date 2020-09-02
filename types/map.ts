@@ -13,3 +13,9 @@ export interface StateProps {
     mapPosition: Position
     markerPosition: Position
 }
+
+export interface MapStateProps {
+    mapPosition: Position
+    markerPosition: Position
+    address: string
+}

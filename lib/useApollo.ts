@@ -2,18 +2,10 @@ import { useMemo } from 'react'
 import { ApolloClient, HttpLink, InMemoryCache, NormalizedCacheObject } from '@apollo/client'
 // import { concatPagination } from '@apollo/client/utilities'
 import env from '../config/env'
-import cookie from "cookie"
-import { parse } from 'path'
+import { authStateVar } from '../local/cache'
+import { write } from 'fs'
 
 let apolloClient
-
-// function parseCookies(req?: any, options = {}) {
-//     return cookie.parse(
-//         req ? req.headers.cookie || "" : document.cookie,
-//         options
-//     );
-// }
-
 
 function createApolloClient(): ApolloClient<NormalizedCacheObject> {
     return new ApolloClient({
@@ -28,12 +20,19 @@ function createApolloClient(): ApolloClient<NormalizedCacheObject> {
         }),
         cache: new InMemoryCache({
             typePolicies: {
-                Query: {
-                }
-            },
-        }),
-    })
-}
+                Query:{
+                    fields:{
+                        authState:{
+                            read(){
+                                return authStateVar() 
+                            }
+                        }
+                    }
+                },
+                    },
+                }),
+            })
+        }
 
 export function initializeApollo(initialState = null) {
     const _apolloClient = apolloClient ?? createApolloClient()

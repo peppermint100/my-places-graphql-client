@@ -39,7 +39,7 @@ const LoginForm: React.FC<Props> = ({ toRegister }) => {
                     data: { email, password }
                 }
             })
-
+            console.log(result)
             router.reload()
         }
         catch (err) {
