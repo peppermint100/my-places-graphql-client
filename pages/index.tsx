@@ -7,13 +7,15 @@ import Loading from "../components/Loading/Loading"
 import Places from "../components/Places/Places"
 import Map from "../components/Map/Map"
 import Jumbotron from "../components/Jumbotron/Jumbotron"
-import { useQuery } from "@apollo/client"
-import { HELLO_QUERY } from "../query/User/Hello"
 import { useEffect } from "react"
+import { userVar } from "../local/cache"
 
 
 export default function Index() {
     const { loading, data } = useAuth()
+    const user = userVar()
+    userVar(data)
+
     return (
         <div>
             <header className={styles.top}>

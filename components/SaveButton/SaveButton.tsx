@@ -4,6 +4,8 @@ import { SAVE_PLACE_MUTATION } from "./../../query/Place/SavePlaceMutation"
 import { useMutation } from '@apollo/client'
 import { MapStateProps } from '../../types/map'
 import { useAuth } from '../../lib/useAuth'
+import { userVar } from '../../local/cache'
+import cookie from "cookie"
 
 interface Props{
     mapState: MapStateProps
@@ -23,9 +25,13 @@ type SavePlaceReponse = boolean
 
 const SaveButton:React.FC<Props> = ({ mapState: { address, mapPosition:{ lat, lng}, } }) => {
     const { loading, data } = useAuth()
-    const [savePlace] = useMutation<SavePlaceReponse, SavePlaceRequest>(SAVE_PLACE_MUTATION)
-
+    const [savePlace] = useMutation<any, any>(SAVE_PLACE_MUTATION)
+    const user = userVar()
+    
+    
     const save = async () =>{
+        console.log(user)
+
         if(!address || address.length <= 0){
             alert('Select Location With Map')
         }
@@ -36,7 +42,7 @@ const SaveButton:React.FC<Props> = ({ mapState: { address, mapPosition:{ lat, ln
                     address,
                     lat,
                     lng,
-                    userId: parseInt(data.self.userId)  
+                    userId: parseInt(user.self.userId)  
                 } 
             }})
         }

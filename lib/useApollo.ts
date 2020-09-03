@@ -2,8 +2,8 @@ import { useMemo } from 'react'
 import { ApolloClient, HttpLink, InMemoryCache, NormalizedCacheObject } from '@apollo/client'
 // import { concatPagination } from '@apollo/client/utilities'
 import env from '../config/env'
-import { authStateVar } from '../local/cache'
-import { write } from 'fs'
+import { authStateVar, userVar } from '../local/cache'
+import {authState, user, isLiked} from "./Field"
 
 let apolloClient
 
@@ -22,13 +22,19 @@ function createApolloClient(): ApolloClient<NormalizedCacheObject> {
             typePolicies: {
                 Query:{
                     fields:{
-                        authState:{
-                            read(){
-                                return authStateVar() 
+                        authState,
+                        user
+                    }
+                },
+                Place:{
+                    fields:{
+                        isLiked:{
+                            read(_, {variables}){
+                                return "every"
                             }
                         }
                     }
-                },
+                }
                     },
                 }),
             })
