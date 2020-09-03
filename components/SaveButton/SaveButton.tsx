@@ -5,7 +5,6 @@ import { useMutation } from '@apollo/client'
 import { MapStateProps } from '../../types/map'
 import { useAuth } from '../../lib/useAuth'
 import { userVar } from '../../local/cache'
-import cookie from "cookie"
 
 interface Props{
     mapState: MapStateProps
@@ -24,10 +23,9 @@ interface SavePlaceRequest{
 type SavePlaceReponse = boolean 
 
 const SaveButton:React.FC<Props> = ({ mapState: { address, mapPosition:{ lat, lng}, } }) => {
-    const { loading, data } = useAuth()
-    const [savePlace] = useMutation<any, any>(SAVE_PLACE_MUTATION)
+    const { loading } = useAuth()
+    const [savePlace] = useMutation<SavePlaceReponse, SavePlaceRequest>(SAVE_PLACE_MUTATION)
     const user = userVar()
-    
     
     const save = async () =>{
         console.log(user)

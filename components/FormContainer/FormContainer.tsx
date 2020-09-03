@@ -16,11 +16,9 @@ const FormContainer: React.FC = () => {
                 authState === AuthState.LOGIN 
                  ? <LoginForm toRegister={() => { 
                      authStateVar(AuthState.REGISTER)
-                     console.log(authState)
                     }} />
                 : <RegisterForm toLogin={() => {
                     authStateVar(AuthState.LOGIN)
-                    console.log(authState)
                  }} />
 
             }

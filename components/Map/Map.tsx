@@ -16,6 +16,9 @@ import styles from "./Map.module.css"
 import LocationIndicator from "../LocationIndicator/LocationIndicator";
 import SaveButton from "../SaveButton/SaveButton";
 import { MapStateProps } from "../../types/map";
+import { useQuery } from "@apollo/client";
+import { GET_MAP_STATE } from "../../query/Client/MapStateQuery";
+import { mapStateVar } from "../../local/cache";
 
 interface Position {
     lat: number
@@ -25,26 +28,15 @@ interface Position {
 Geocode.setApiKey(env.GOOGLE_API_KEY)
 
 const Map = () => {
-    const [mapState, setMapState] = useState<MapStateProps>({
-        address: "",
-        mapPosition: {
-            lat: 0,
-            lng: 0
-        },
-        markerPosition: {
-            lat: 0,
-            lng: 0
-        }
-    })
+    const { data : { mapState }} = useQuery<{ mapState : MapStateProps}>(GET_MAP_STATE)
 
     const onDragEnd = async (e: any) => {
         let lat = e.latLng.lat()
         let lng = e.latLng.lng()
         try{
             const geoInfo = await getInfoByLatLng(lat, lng) 
-            setMapState((mapState: any) => {
-                return (
-                    {
+            mapStateVar(
+                {
                         ...mapState,
                         address: geoInfo.results[0].formatted_address , 
                         mapPosition: {
@@ -54,12 +46,13 @@ const Map = () => {
                             lat, lng
                         }
                     }
-                )
-            })
+            )
+         
         }catch(err){
             if(err){
                 console.log("geo error : " , err)
-                setMapState(mapState)
+                // setMapState(mapState)
+                mapStateVar(mapState)
             }
         }
     }
@@ -68,9 +61,8 @@ const Map = () => {
         const address = place.formatted_address
         const lat = place.geometry.location.lat()
         const lng = place.geometry.location.lng()
-        
-        setMapState((mapState: MapStateProps) => {
-            return({
+
+        mapStateVar({
                 ...mapState,
                 address,
                 mapPosition:{
@@ -79,8 +71,8 @@ const Map = () => {
                 markerPosition:{
                     lat, lng
                 }
-            })
-        })
+            }
+        )
     }
    
     const MapWithAMarker: React.ComponentClass<any, any> = withScriptjs(withGoogleMap(props =>
@@ -95,24 +87,26 @@ const Map = () => {
            >
               {!mapState.address ? null : <InfoWindow><>{mapState.address}</></InfoWindow>} 
                </Marker> 
-<Autocomplete
-className={styles.autoComplete}
-    onPlaceSelected={onPlaceSelected}
-    types={['(regions)']}
-/>
-        <LocationIndicator address={mapState.address} />
-        <SaveButton mapState={mapState} />
-        </GoogleMap>
-    ));
+               <form>
+                    <Autocomplete
+                        className={styles.autoComplete}
+                            onPlaceSelected={onPlaceSelected}
+                            types={['(regions)']}
+                    />
+                    <LocationIndicator address={mapState.address} />
+                    <SaveButton mapState={mapState} />
+                </form>
+            </GoogleMap>
+        ));
 
-    return (
-        <MapWithAMarker
-            googleMapURL={`https://maps.googleapis.com/maps/api/js?key=${env.GOOGLE_API_KEY}&v=3.exp&libraries=geometry,drawing,places`}
-            loadingElement={<div style={{ height: `100%` }} />}
-            containerElement={<div style={{ height: `400px` }} />}
-            mapElement={<div style={{ height: `100%` }} />}
-        />
-    )
-}
+        return (
+            <MapWithAMarker
+                googleMapURL={`https://maps.googleapis.com/maps/api/js?key=${env.GOOGLE_API_KEY}&v=3.exp&libraries=geometry,drawing,places`}
+                loadingElement={<div style={{ height: `100%` }} />}
+                containerElement={<div style={{ height: `400px` }} />}
+                mapElement={<div style={{ height: `100%` }} />}
+            />
+        )
+    }
 
-export default Map
+    export default Map

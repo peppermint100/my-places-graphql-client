@@ -1,7 +1,7 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import styles from "./Places.module.css"
 import Place from '../Place/Place'
-import { useMutation, useQuery } from '@apollo/client'
+import { useQuery } from '@apollo/client'
 import { SELF_PLACE_QUERY } from '../../query/User/SelfQuery'
 import { SelfPlaceDataProps, PlaceInfo } from '../../types/place'
 import Loading from '../Loading/Loading'
@@ -15,10 +15,9 @@ interface Props {
 }
 
 const Places: React.FC<Props> = ({ data: { userId, username, email } }) => {
-    const { loading, data } = useQuery<SelfPlaceDataProps>(SELF_PLACE_QUERY)
     // console.log(data)
-
-    return (
+    const { loading, data } = useQuery<SelfPlaceDataProps>(SELF_PLACE_QUERY)
+       return (
         <div className={styles.container}>
             { data && data.self 
             ? 

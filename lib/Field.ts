@@ -1,4 +1,4 @@
-import { authStateVar, userVar } from "../local/cache"
+import { authStateVar, userVar, mapStateVar } from "../local/cache"
 
 export const authState = {
         read(){
@@ -18,4 +18,10 @@ export const user  = {
             }
     }
 
+
+export const mapState = {
+    read(){
+        return mapStateVar()
+    }
+}
 

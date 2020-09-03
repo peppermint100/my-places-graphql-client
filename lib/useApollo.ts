@@ -3,7 +3,7 @@ import { ApolloClient, HttpLink, InMemoryCache, NormalizedCacheObject } from '@a
 // import { concatPagination } from '@apollo/client/utilities'
 import env from '../config/env'
 import { authStateVar, userVar } from '../local/cache'
-import {authState, user, isLiked} from "./Field"
+import {authState, user, mapState} from "./Field"
 
 let apolloClient
 
@@ -23,7 +23,8 @@ function createApolloClient(): ApolloClient<NormalizedCacheObject> {
                 Query:{
                     fields:{
                         authState,
-                        user
+                        user,
+                        mapState
                     }
                 },
                 Place:{
